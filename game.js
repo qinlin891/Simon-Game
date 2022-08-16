@@ -3,6 +3,8 @@ let gamePattern = [];
 let userClickedPattern = [];
 let started = false;
 let level = 0;
+const localStorageKey = 'score';
+updateHighScore(0);
 
 $(".btn").click(function() {
     let userChosenColour = $(this).attr("id");
@@ -15,7 +17,7 @@ $(".btn").click(function() {
 $("body").keypress(function() {
     if(!started) {
         started = true;
-        $("h1").text("Level 0")
+        $("h1").text("Level 0");
         nextSequence();
     }
 })
@@ -33,7 +35,8 @@ function checkAnswer(currentLevel) {
         $("h1").text("Game Over, Press Any Key to Restart");
         setTimeout(function() {
             $("body").removeClass("game-over");
-        }, 200)
+        }, 200);
+        updateHighScore(gamePattern.length - 1);
         startOver();
     }
 }
@@ -70,5 +73,17 @@ function startOver() {
     level = 0;
     gamePattern = [];
     started = false;
+
 }
 
+function updateHighScore(score) {
+    const highScore = localStorage.getItem(localStorageKey);
+    if(highScore) {
+        const newScore = highScore > score ? highScore : score;
+        localStorage.setItem(localStorageKey, newScore.toString());
+    } else {
+        localStorage.setItem(localStorageKey, score.toString());
+    };
+    $("#score").text("High Score: " + localStorage.getItem(localStorageKey));
+
+}
